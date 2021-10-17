@@ -125,7 +125,9 @@ func (s *Server) ServeTCP(conn *net.TCPConn, rp, wp *bytes.Pool, tr *xtime.Timer
 	ch.IP, _, _ = net.SplitHostPort(conn.RemoteAddr().String())
 	// must not setadv, only used in auth
 	step = 1
+	// 获取一个可写的ringbuffer中的 proto (也就是一个请求？)
 	if p, err = ch.CliProto.Set(); err == nil {
+		// 向logic发出 connect 请求
 		if ch.Mid, ch.Key, rid, accepts, hb, err = s.authTCP(ctx, rr, wr, p); err == nil {
 			ch.Watch(accepts...)
 			b = s.Bucket(ch.Key)
@@ -145,7 +147,8 @@ func (s *Server) ServeTCP(conn *net.TCPConn, rp, wp *bytes.Pool, tr *xtime.Timer
 		return
 	}
 	trd.Key = ch.Key
-	tr.Set(trd, hb)
+	// 将步骤1之前的握手超时，换成心跳时间
+	tr.Set(trd, hb) // hb => heartbeatTime
 	white = whitelist.Contains(ch.Mid)
 	if white {
 		whitelist.Printf("key: %s[%s] auth\n", ch.Key, rid)
@@ -234,6 +237,7 @@ func (s *Server) dispatchTCP(conn *net.TCPConn, wr *bufio.Writer, wp *bytes.Pool
 		if white {
 			whitelist.Printf("key: %s wait proto ready\n", ch.Key)
 		}
+		// 这里就是去读取channel的 signal（signal是缓存的响应）
 		var p = ch.Ready()
 		if white {
 			whitelist.Printf("key: %s proto ready\n", ch.Key)
@@ -276,6 +280,7 @@ func (s *Server) dispatchTCP(conn *net.TCPConn, wr *bufio.Writer, wp *bytes.Pool
 					whitelist.Printf("key: %s write client proto%v\n", ch.Key, p)
 				}
 				p.Body = nil // avoid memory leak
+				// 前面调用了Get方法，这里调用为了 readPos 自增，读取下一个
 				ch.CliProto.GetAdv()
 			}
 		default:
@@ -322,6 +327,7 @@ failed:
 	}
 }
 
+// rpc logic.Connect
 // auth for goim handshake with client, use rsa & aes.
 func (s *Server) authTCP(ctx context.Context, rr *bufio.Reader, wr *bufio.Writer, p *protocol.Proto) (mid int64, key, rid string, accepts []int32, hb time.Duration, err error) {
 	for {

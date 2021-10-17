@@ -11,7 +11,7 @@ import (
 type Room struct {
 	ID        string
 	rLock     sync.RWMutex
-	next      *Channel
+	next      *Channel // 双向链表结构
 	drop      bool
 	Online    int32 // dirty read is ok
 	AllOnline int32
@@ -30,7 +30,7 @@ func NewRoom(id string) (r *Room) {
 // Put put channel into the room.
 func (r *Room) Put(ch *Channel) (err error) {
 	r.rLock.Lock()
-	if !r.drop {
+	if !r.drop { // room还没下线的情况下
 		if r.next != nil {
 			r.next.Prev = ch
 		}

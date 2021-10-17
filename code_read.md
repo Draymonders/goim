@@ -32,23 +32,23 @@
             - [ ] conf.go
         - [ ] nodes.go
         - [ ] conn.go
-    - [ ] comet
-        - [ ] bucket.go
-        - [ ] server.go
+    - [ ] comet // 接下来读comet部分
+        - [x] bucket.go
+        - [x] server.go
         - [ ] grpc
             - [ ] server.go
-        - [ ] operation.go
+        - [x] operation.go // 封装了对logic模块的调用
         - [ ] server_websocket.go
-        - [ ] channel.go
-        - [ ] whitelist.go
-        - [ ] round.go
-        - [ ] server_tcp.go
-        - [ ] room.go
-        - [ ] errors
-            - [ ] errors.go
-        - [ ] ring.go
-        - [ ] conf
-            - [ ] conf.go
+        - [x] channel.go   // 双向链表维护，push的时候将 channel.signal <- *protocol.Proto? 虽然不知道干啥的
+        - [x] whitelist.go // 白名单，不知道干啥的
+        - [x] round.go // 初始化 timers, reader, writer
+        - [x] server_tcp.go // 握手 / 心跳 / 业务逻辑处理
+        - [x] room.go // 用双向链表维护了一个room的channels, 然后实现push方法
+        - [x] errors
+            - [x] errors.go 
+        - [x] ring.go // 用了一个环的方式，rp和wp分别递增
+        - [x] conf
+            - [x] conf.go 
     - [ ] job
         - [ ] comet.go
         - [ ] job.go
@@ -56,7 +56,7 @@
         - [ ] room.go
         - [ ] conf
             - [ ] conf.go
-- [ ] api
+- [ ] api 
     - [ ] generate.go
     - [ ] logic
         - [ ] logic.proto

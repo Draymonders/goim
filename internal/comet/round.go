@@ -51,8 +51,10 @@ func NewRound(c *conf.Config) (r *Round) {
 		r.writers[i].Init(r.options.WriteBuf, r.options.WriteBufSize)
 	}
 	// timer
+	// 默认times有32个
 	r.timers = make([]time.Timer, r.options.Timer)
 	for i = 0; i < r.options.Timer; i++ {
+		// time size 2048
 		r.timers[i].Init(r.options.TimerSize)
 	}
 	return

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"math/rand"
@@ -14,13 +15,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/bilibili/discovery/naming"
-	resolver "github.com/bilibili/discovery/naming/grpc"
 	"github.com/Terry-Mao/goim/internal/comet"
 	"github.com/Terry-Mao/goim/internal/comet/conf"
 	"github.com/Terry-Mao/goim/internal/comet/grpc"
 	md "github.com/Terry-Mao/goim/internal/logic/model"
 	"github.com/Terry-Mao/goim/pkg/ip"
+	"github.com/bilibili/discovery/naming"
+	resolver "github.com/bilibili/discovery/naming/grpc"
 	log "github.com/golang/glog"
 )
 
@@ -30,19 +31,26 @@ const (
 )
 
 func main() {
+	// ./comet -conf=target/comet.toml -region=sh -zone=sh001 -deploy.env=dev -weight=10 -addrs=127.0.0.1 -debug=true 2>&1 > target/comet.log
 	flag.Parse()
 	if err := conf.Init(); err != nil {
 		panic(err)
 	}
+	confBytes, _ := json.Marshal(conf.Conf)
+	fmt.Printf("config %+v\n", string(confBytes))
+
 	rand.Seed(time.Now().UTC().UnixNano())
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	println(conf.Conf.Debug)
 	log.Infof("goim-comet [version: %s env: %+v] start", ver, conf.Conf.Env)
-	// register discovery
+
+	// 连接注册中心...
 	dis := naming.New(conf.Conf.Discovery)
 	resolver.Register(dis)
+
 	// new comet server
 	srv := comet.NewServer(conf.Conf)
+	// 白名单，虽然不知道干啥用
 	if err := comet.InitWhitelist(conf.Conf.Whitelist); err != nil {
 		panic(err)
 	}

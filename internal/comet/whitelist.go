@@ -15,6 +15,7 @@ type Whitelist struct {
 	list map[int64]struct{} // whitelist for debug
 }
 
+// TODO @yubing mid是个啥?
 // InitWhitelist a whitelist struct.
 func InitWhitelist(c *conf.Whitelist) (err error) {
 	var (

@@ -16,13 +16,14 @@ import (
 // Connect connected a connection.
 func (s *Server) Connect(c context.Context, p *protocol.Proto, cookie string) (mid int64, key, rid string, accepts []int32, heartbeat time.Duration, err error) {
 	reply, err := s.rpcClient.Connect(c, &logic.ConnectReq{
-		Server: s.serverID,
+		Server: s.serverID, // conf.Env.Host
 		Cookie: cookie,
 		Token:  p.Body,
 	})
 	if err != nil {
 		return
 	}
+	// TODO @yubing Mid,Key,Accepts 是啥
 	return reply.Mid, reply.Key, reply.RoomID, reply.Accepts, time.Duration(reply.Heartbeat), nil
 }
 
@@ -72,11 +73,13 @@ func (s *Server) Operate(ctx context.Context, p *protocol.Proto, ch *Channel, b 
 			log.Errorf("b.ChangeRoom(%s) error(%v)", p.Body, err)
 		}
 		p.Op = protocol.OpChangeRoomReply
+	// 订阅
 	case protocol.OpSub:
 		if ops, err := strings.SplitInt32s(string(p.Body), ","); err == nil {
 			ch.Watch(ops...)
 		}
 		p.Op = protocol.OpSubReply
+	// 取消订阅
 	case protocol.OpUnsub:
 		if ops, err := strings.SplitInt32s(string(p.Body), ","); err == nil {
 			ch.UnWatch(ops...)

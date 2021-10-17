@@ -13,15 +13,16 @@ import (
 type Bucket struct {
 	c     *conf.Bucket
 	cLock sync.RWMutex        // protect the channels for chs
-	chs   map[string]*Channel // map sub key to a channel
+	chs   map[string]*Channel // map sub key to a channel，默认大小1024
 	// room
-	rooms       map[string]*Room // bucket room channels
-	routines    []chan *pb.BroadcastRoomReq
+	rooms       map[string]*Room // bucket room channels，roomId -> *Room, 默认大小1024
+	routines    []chan *pb.BroadcastRoomReq // 默认
 	routinesNum uint64
 
 	ipCnts map[string]int32
 }
 
+// 还不太清晰bucket是干啥的
 // NewBucket new a bucket struct. store the key with im channel.
 func NewBucket(c *conf.Bucket) (b *Bucket) {
 	b = new(Bucket)
@@ -31,7 +32,7 @@ func NewBucket(c *conf.Bucket) (b *Bucket) {
 	b.rooms = make(map[string]*Room, c.Room)
 	b.routines = make([]chan *pb.BroadcastRoomReq, c.RoutineAmount)
 	for i := uint64(0); i < c.RoutineAmount; i++ {
-		c := make(chan *pb.BroadcastRoomReq, c.RoutineSize)
+		c := make(chan *pb.BroadcastRoomReq, c.RoutineSize) // routine size = 1024
 		b.routines[i] = c
 		go b.roomproc(c)
 	}
@@ -65,12 +66,13 @@ func (b *Bucket) RoomsCount() (res map[string]int32) {
 	return
 }
 
+// 用户channel 切换 room
 // ChangeRoom change ro room
 func (b *Bucket) ChangeRoom(nrid string, ch *Channel) (err error) {
 	var (
-		nroom *Room
+		nroom *Room   // new room 新的room
 		ok    bool
-		oroom = ch.Room
+		oroom = ch.Room // origin room 老room
 	)
 	// change to no room
 	if nrid == "" {
@@ -97,6 +99,7 @@ func (b *Bucket) ChangeRoom(nrid string, ch *Channel) (err error) {
 	return
 }
 
+// 将一个channel 放到 rid对应的room下
 // Put put a channel according with sub key.
 func (b *Bucket) Put(rid string, ch *Channel) (err error) {
 	var (

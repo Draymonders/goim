@@ -25,6 +25,7 @@ type Channel struct {
 }
 
 // NewChannel new a channel.
+// 默认cli是5，svr是10
 func NewChannel(cli, svr int) *Channel {
 	c := new(Channel)
 	c.CliProto.Init(cli)

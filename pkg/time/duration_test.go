@@ -17,7 +17,7 @@ func TestDurationText(t *testing.T) {
 	outputs[2] = time.Hour
 
 	var d Duration
-	for i := 0; i< len(inputs); i++ {
+	for i := 0; i < len(inputs); i++ {
 		input := inputs[i]
 		output := outputs[i]
 		if err := d.UnmarshalText(input); err != nil {

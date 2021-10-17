@@ -46,7 +46,7 @@ func TestWriter2(t *testing.T) {
 	}
 	w.print()
 
-	b := []byte{byte(1),byte(2)}
+	b := []byte{byte(1), byte(2)}
 	w.Write(b)
 	w.print()
 

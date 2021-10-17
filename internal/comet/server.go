@@ -69,13 +69,14 @@ func NewServer(c *conf.Config) *Server {
 		round:     NewRound(c),
 		rpcClient: newLogicClient(c.RPCClient),
 	}
-	// init bucket
+	// init bucket, default size is 32
 	s.buckets = make([]*Bucket, c.Bucket.Size)
 	s.bucketIdx = uint32(c.Bucket.Size)
 	for i := 0; i < c.Bucket.Size; i++ {
 		s.buckets[i] = NewBucket(c.Bucket)
 	}
 	s.serverID = c.Env.Host
+	// TODO @yubing 还没有读
 	go s.onlineproc()
 	return s
 }

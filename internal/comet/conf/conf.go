@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bilibili/discovery/naming"
 	"github.com/BurntSushi/toml"
 	xtime "github.com/Terry-Mao/goim/pkg/time"
+	"github.com/bilibili/discovery/naming"
 )
 
 var (
@@ -173,11 +173,11 @@ type Websocket struct {
 
 // Protocol is protocol config.
 type Protocol struct {
-	Timer            int
-	TimerSize        int
-	SvrProto         int
-	CliProto         int
-	HandshakeTimeout xtime.Duration
+	Timer            int // 32
+	TimerSize        int // 2048
+	SvrProto         int // 默认值是10
+	CliProto         int // 默认值是5
+	HandshakeTimeout xtime.Duration // 8000000000
 }
 
 // Bucket is bucket config.

@@ -1,0 +1,97 @@
+{
+  "Debug": true,
+  "Env":
+  {
+    "Region": "sh",
+    "Zone": "sh001",
+    "DeployEnv": "dev",
+    "Host": "C02FF06RMD6V",
+    "Weight": 10,
+    "Offline": false,
+    "Addrs":
+    [
+      "127.0.0.1"
+    ]
+  },
+  "Discovery":
+  {
+    "Nodes":
+    [
+      "127.0.0.1:7171"
+    ],
+    "Region": "sh",
+    "Zone": "sh001",
+    "Env": "dev",
+    "Host": "C02FF06RMD6V"
+  },
+  "TCP":
+  {
+    "Bind":
+    [
+      ":3101"
+    ],
+    "Sndbuf": 4096,
+    "Rcvbuf": 4096,
+    "KeepAlive": false,
+    "Reader": 32,
+    "ReadBuf": 1024,
+    "ReadBufSize": 8192,
+    "Writer": 32,
+    "WriteBuf": 1024,
+    "WriteBufSize": 8192
+  },
+  "Websocket":
+  {
+    "Bind":
+    [
+      ":3102"
+    ],
+    "TLSOpen": false,
+    "TLSBind":
+    [
+      ":3103"
+    ],
+    "CertFile": "../../cert.pem",
+    "PrivateFile": "../../private.pem"
+  },
+  "Protocol":
+  {
+    "Timer": 32,
+    "TimerSize": 2048,
+    "SvrProto": 10,
+    "CliProto": 5,
+    "HandshakeTimeout": 8000000000
+  },
+  "Bucket":
+  {
+    "Size": 32,
+    "Channel": 1024,
+    "Room": 1024,
+    "RoutineAmount": 32,
+    "RoutineSize": 1024
+  },
+  "RPCClient":
+  {
+    "Dial": 1000000000,
+    "Timeout": 1000000000
+  },
+  "RPCServer":
+  {
+    "Network": "tcp",
+    "Addr": ":3109",
+    "Timeout": 1000000000,
+    "IdleTimeout": 60000000000,
+    "MaxLifeTime": 7200000000000,
+    "ForceCloseWait": 20000000000,
+    "KeepAliveInterval": 60000000000,
+    "KeepAliveTimeout": 20000000000
+  },
+  "Whitelist":
+  {
+    "Whitelist":
+    [
+      123
+    ],
+    "WhiteLog": "/tmp/white_list.log"
+  }
+}

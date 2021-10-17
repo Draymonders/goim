@@ -10,13 +10,13 @@ import (
 // Ring ring proto buffer.
 type Ring struct {
 	// read
-	rp   uint64
+	rp   uint64  // read position，递增，可大于num
 	num  uint64
 	mask uint64
 	// TODO split cacheline, many cpu cache line size is 64
 	// pad [40]byte
 	// write
-	wp   uint64
+	wp   uint64  // write position，递增，可大于num
 	data []protocol.Proto
 }
 
