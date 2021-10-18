@@ -207,6 +207,7 @@ func (s *Server) ServeWebsocket(conn net.Conn, rp, wp *bytes.Pool, tr *xtime.Tim
 	// must not setadv, only used in auth
 	step = 3
 	if p, err = ch.CliProto.Set(); err == nil {
+		// TODO AUTH获取mid key rid accepts hb
 		if ch.Mid, ch.Key, rid, accepts, hb, err = s.authWebsocket(ctx, ws, p, req.Header.Get("Cookie")); err == nil {
 			ch.Watch(accepts...)
 			b = s.Bucket(ch.Key)

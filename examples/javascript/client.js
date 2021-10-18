@@ -31,13 +31,15 @@
         var textEncoder = new TextEncoder();
         var heartbeatInterval;
         function connect() {
-            var ws = new WebSocket('ws://sh.tony.wiki:3102/sub');
-            //var ws = new WebSocket('ws://127.0.0.1:3102/sub');
+            //var ws = new WebSocket('ws://sh.tony.wiki:3102/sub');
+            var ws = new WebSocket('ws://127.0.0.1:3102/sub');
             ws.binaryType = 'arraybuffer';
+            // 实例对象的onopen属性，用于指定连接成功后的回调函数。
             ws.onopen = function() {
                 auth();
             }
 
+            // 用于指定收到服务器数据后的回调函数。
             ws.onmessage = function(evt) {
                 var data = evt.data;
                 var dataView = new DataView(data, 0);
@@ -86,6 +88,7 @@
                 }
             }
 
+            // 指定连接关闭后的回调函数
             ws.onclose = function() {
                 if (heartbeatInterval) clearInterval(heartbeatInterval);
                 setTimeout(reConnect, delay);
@@ -106,6 +109,7 @@
                 appendMsg("send: heartbeat");
             }
 
+            // auth请求
             function auth() {
                 var token = '{"mid":123, "room_id":"live://1000", "platform":"web", "accepts":[1000,1001,1002]}'
                 var headerBuf = new ArrayBuffer(rawHeaderLen);
@@ -127,6 +131,7 @@
                 console.log("messageReceived:", "ver=" + ver, "body=" + body);
             }
 
+
             function mergeArrayBuffer(ab1, ab2) {
                 var u81 = new Uint8Array(ab1),
                     u82 = new Uint8Array(ab2),
@@ -136,6 +141,7 @@
                 return res.buffer;
             }
 
+            // str -> uint8Array
             function char2ab(str) {
                 var buf = new ArrayBuffer(str.length);
                 var bufView = new Uint8Array(buf);
@@ -147,6 +153,7 @@
 
         }
 
+        // 重连
         function reConnect() {
             self.createConnect(--max, delay * 2);
         }

@@ -50,7 +50,7 @@ func main() {
 
 	// new comet server
 	srv := comet.NewServer(conf.Conf)
-	// 白名单，虽然不知道干啥用
+	// 白名单，测试用户使用
 	if err := comet.InitWhitelist(conf.Conf.Whitelist); err != nil {
 		panic(err)
 	}
